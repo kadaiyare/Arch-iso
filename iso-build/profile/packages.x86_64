@@ -1,0 +1,52 @@
+# 最小限のLive環境用パッケージ
+# インストーラーの実行に必要な最低限のパッケージのみ
+
+# ベースシステム
+base
+linux
+linux-firmware
+mkinitcpio
+mkinitcpio-archiso
+
+# ブート関連
+syslinux
+efibootmgr
+grub
+
+# ネットワーク
+networkmanager
+dhcpcd
+wpa_supplicant
+
+# インストールツール
+arch-install-scripts
+gptfdisk
+parted
+dosfstools
+e2fsprogs
+
+# システムユーティリティ
+sudo
+vim
+nano
+less
+
+# インストーラースクリプト用
+dialog
+git
+curl
+wget
+reflector
+
+# CPUマイクロコード
+intel-ucode
+amd-ucode
+
+# シェル
+zsh
+bash-completion
+
+# 日本語フォント・日本語表示（Live環境用）
+noto-fonts
+noto-fonts-cjk
+terminus-font

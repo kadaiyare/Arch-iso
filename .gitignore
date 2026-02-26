@@ -1,0 +1,15 @@
+# ISO ビルド中間ファイル・成果物
+iso-build/work/
+iso-build/out/
+iso-build/profile/airootfs.backup/
+
+# ビルド時の一時ファイル
+*.iso
+*.img
+
+# ログ
+*.log
+
+# 旧PXE設定（不使用）
+client-config/
+server-config/

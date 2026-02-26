@@ -1,0 +1,85 @@
+# ZTP自動インストールパッケージリスト
+# 現在の環境を再現（KDE Plasma, swaync, waybar は除外）
+
+## ベースシステム
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+networkmanager
+sudo
+git
+
+## セキュリティ・ファイアウォール
+ufw
+openssh
+
+## Bluetooth
+bluez
+bluez-utils
+blueman
+
+## Hyprland + Wayland環境
+hyprland
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+qt5-wayland
+qt6-wayland
+sddm
+polkit-kde-agent
+
+## ターミナル・シェル・TUI
+kitty
+zsh
+zsh-completions
+yazi              # ファイルマネージャー
+btop              # システムモニター
+
+## 開発環境
+rustup            # Rust (インストール後に rust-analyzer など追加)
+go
+python
+python-pip
+nodejs
+npm
+
+## ブラウザ・アプリケーション
+firefox
+
+## ランチャー・ユーティリティ
+wofi
+fastfetch
+
+## フォント
+ttf-dejavu
+ttf-liberation
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-bigblueterminal-nerd
+
+## オーディオ
+pipewire
+pipewire-pulse
+pipewire-alsa
+pipewire-jack
+wireplumber
+
+## グラフィックドライバ（ハードウェアに応じて調整）
+mesa
+vulkan-icd-loader
+# nvidia系のドライバは後で追加
+
+## その他必須ユーティリティ
+wget
+curl
+unzip
+zip
+man-db
+vim
+neovim
+
+## カスタムビルドが必要（後でインストール）
+# nucleus-shell (~/nucleus-shell からビルド)
+# oh-my-zsh (curlでインストール)
