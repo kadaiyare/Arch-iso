@@ -62,13 +62,10 @@ configure_hostname() {
 }
 
 configure_root_password() {
-    log_info "Setting root password..."
-    local hashed
-    hashed=$(openssl passwd -6 "${ROOT_PASSWORD}") \
-        || die "openssl passwd failed for root"
-    arch-chroot /mnt usermod -p "${hashed}" root \
-        || die "usermod failed for root"
-    log_info "✓ Root password set"
+    log_info "Locking root account (sudo via wheel group)..."
+    arch-chroot /mnt usermod -L root \
+        || log_warn "usermod -L root failed, continuing"
+    log_info "✓ Root account locked"
 }
 
 create_user() {
@@ -112,9 +109,10 @@ create_user() {
 }
 
 configure_sudo() {
-    log_info "Configuring sudo..."
-    sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers \
-        || log_warn "sudo config failed"
+    log_info "Configuring sudo (NOPASSWD for wheel)..."
+    # インストール中のmakepkg等でパスワード不要にする
+    sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /mnt/etc/sudoers \
+        || log_warn "sudo NOPASSWD config failed"
     log_info "✓ sudo configured"
 }
 

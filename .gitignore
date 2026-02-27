@@ -13,3 +13,7 @@ iso-build/profile/airootfs.backup/
 # 旧PXE設定（不使用）
 client-config/
 server-config/
+
+# Markdownファイル（README.md以外）
+*.md
+!README.md

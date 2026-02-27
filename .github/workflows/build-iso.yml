@@ -1,0 +1,56 @@
+name: Build and Release ISO
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install archiso
+        run: pacman -Sy --noconfirm archiso
+
+      - name: Build ISO
+        run: |
+          mkdir -p iso-build/work iso-build/out
+          mkarchiso -v -w iso-build/work -o iso-build/out iso-build/profile
+
+      - name: Get ISO info
+        id: iso_info
+        run: |
+          ISO=$(find iso-build/out -name "*.iso" | head -1)
+          echo "iso_path=${ISO}" >> "$GITHUB_OUTPUT"
+          echo "iso_name=$(basename ${ISO})" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum ${ISO} | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: archlinux-ztp-iso
+          path: ${{ steps.iso_info.outputs.iso_path }}
+          retention-days: 7
+
+      - name: Create Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.iso_info.outputs.iso_path }}
+          body: |
+            ## Arch Linux ZTP ISO
+
+            SHA256: `${{ steps.iso_info.outputs.sha256 }}`
+
+            ### インストール方法
+            ```bash
+            sudo dd if=${{ steps.iso_info.outputs.iso_name }} of=/dev/sdX bs=4M status=progress && sync
+            ```

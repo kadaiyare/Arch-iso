@@ -46,10 +46,6 @@ configure_sddm() {
 
     # Waylandセッションで起動・自動ログイン設定
     cat > /mnt/etc/sddm.conf.d/10-ztp.conf << SDDMCONF
-[General]
-DisplayServer=wayland
-GreeterEnvironment=QT_WAYLAND_SHELL_INTEGRATION=layer-shell
-
 [Autologin]
 User=${USERNAME}
 Session=hyprland
@@ -72,11 +68,38 @@ DESKTOP
     log_info "✓ SDDM configured (auto-login: ${USERNAME} -> Hyprland)"
 }
 
+configure_wayland_env() {
+    log_info "Configuring Wayland environment variables..."
+    cat >> /mnt/etc/environment << 'ENVCONF'
+# Hyprland / wlroots - cursor fix (required in most VMs and some hardware)
+WLR_NO_HARDWARE_CURSORS=1
+HYPRLAND_NO_HARDWARE_CURSORS=1
+ENVCONF
+    log_info "✓ Wayland env configured"
+}
+
+install_virtualbox_guest() {
+    log_info "Detecting virtualization..."
+    local virt
+    virt=$(systemd-detect-virt 2>/dev/null || echo "none")
+    log_info "Virtualization: ${virt}"
+    if [ "${virt}" = "oracle" ]; then
+        log_info "VirtualBox detected - installing guest utilities..."
+        arch-chroot /mnt pacman -S --noconfirm --needed virtualbox-guest-utils \
+            || log_warn "virtualbox-guest-utils install failed"
+        arch-chroot /mnt systemctl enable vboxservice \
+            || log_warn "vboxservice enable failed"
+        log_info "✓ VirtualBox guest utils installed"
+    fi
+}
+
 main() {
     log_info "=== Enable services start ==="
     enable_services
     configure_ufw
     configure_sddm
+    configure_wayland_env
+    install_virtualbox_guest
     log_info "=== Enable services complete ==="
 }
 main "$@"

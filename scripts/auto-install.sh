@@ -12,6 +12,16 @@ log_error() { echo -e "${RED}[ERROR]${NC} $*" | tee -a "$LOG_FILE"; }
 log_warn()  { echo -e "${YELLOW}[WARNING]${NC} $*" | tee -a "$LOG_FILE"; }
 log_step()  { echo -e "${BLUE}[STEP]${NC} $*" | tee -a "$LOG_FILE"; }
 
+HOST_LOG_URL="http://10.0.2.2:9999"
+
+# ホスト(10.0.2.2:9999)にログを送信する。失敗しても無視
+send_log_to_host() {
+    curl -s --connect-timeout 2 -X POST \
+        -H "Content-Type: text/plain" \
+        --data-binary "@${LOG_FILE}" \
+        "${HOST_LOG_URL}" >/dev/null 2>&1 || true
+}
+
 run_step() {
     local name="$1"
     local script="$2"
@@ -21,6 +31,7 @@ run_step() {
     else
         log_error "✗ ${name} FAILED (exit $?)"
         log_error "See full log: $LOG_FILE"
+        send_log_to_host
         echo
         echo -e "${RED}====== STEP FAILED: ${name} ======${NC}"
         echo "Press Enter to continue anyway, or Ctrl+C to abort"
@@ -79,6 +90,9 @@ main() {
     run_step "5/7 Package installation" /root/package-install.sh
     run_step "6/7 Dotfiles & nucleus-shell" /root/dotfiles-apply.sh
     run_step "7/7 Enable system services"   /root/service-enable.sh
+
+    log_info "Sending log to host..."
+    send_log_to_host
 
     source /tmp/ztp-install.conf
     echo

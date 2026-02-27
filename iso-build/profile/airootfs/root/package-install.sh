@@ -21,7 +21,7 @@ install_packages() {
         exit 1
     fi
     local packages
-    packages=$(grep -v '^#' "$PACKAGES_FILE" | grep -v '^$' | tr '\n' ' ')
+    packages=$(grep -v '^#' "$PACKAGES_FILE" | grep -v '^$' | sed 's/[[:space:]]*#.*//' | grep -v '^$' | tr '\n' ' ')
     log_info "Packages to install: $(echo $packages | wc -w)"
     log_info "Installing packages (this may take a while)..."
     arch-chroot /mnt pacman -S --noconfirm $packages || {

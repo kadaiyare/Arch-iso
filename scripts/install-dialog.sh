@@ -110,27 +110,6 @@ input_password() {
     log_info "✓ User password set"
 }
 
-input_root_password() {
-    ROOT_PASSWORD=$(dialog --stdout --insecure --passwordbox "Enter root password:" 10 60)
-
-    if [ -z "$ROOT_PASSWORD" ]; then
-        log_error "Root password is required"
-        input_root_password
-        return
-    fi
-
-    ROOT_PASSWORD_CONFIRM=$(dialog --stdout --insecure --passwordbox "Confirm root password:" 10 60)
-
-    if [ "$ROOT_PASSWORD" != "$ROOT_PASSWORD_CONFIRM" ]; then
-        log_error "Passwords do not match"
-        input_root_password
-        return
-    fi
-
-    printf 'ROOT_PASSWORD=%q\n' "${ROOT_PASSWORD}" >> "$CONFIG_FILE"
-    log_info "✓ Root password set"
-}
-
 select_timezone() {
     TIMEZONE=$(dialog --stdout --inputbox "Enter timezone:" 10 60 "Asia/Tokyo")
 
@@ -190,7 +169,6 @@ main() {
     input_hostname
     input_username
     input_password
-    input_root_password
     select_timezone
     select_locale
     final_confirmation
