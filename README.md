@@ -1,4 +1,4 @@
-# Arch Linux ZTP (Zero Touch Provisioning) System
+# Arch Linux easy-setup System
 
 ## 概要
 このプロジェクトは、USBメモリから起動して最小限の質問に答えるだけで、Arch Linux + Hyprland環境が完全自動でセットアップされるゼロタッチプロビジョニングシステムです。
